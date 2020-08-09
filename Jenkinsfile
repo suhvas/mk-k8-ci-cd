@@ -1,3 +1,4 @@
+
 node{
   def Namespace = "pkapp"
   def ImageName = "suhvas/suhas-pridevops"
@@ -36,7 +37,7 @@ node{
     //sh 'docker rmi suhvas/suhas-pridevops:0.1.0'
     //sh "docker rmi -t ${ImageName}:${imageTag}"
   }
-    stage('Deploy on K8s'){
+    //stage('Deploy on K8s'){
 	//script{
        // sh "cd ansible/sayarapp-deploy"
 	//    sh "pwd"
@@ -49,3 +50,5 @@ node{
         currentBuild.result = 'FAILURE'
     }
 }
+}
+
