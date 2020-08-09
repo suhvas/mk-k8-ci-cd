@@ -1,11 +1,12 @@
 node{
   def Namespace = "pkapp"
-  def ImageName = "maheshkharwadkar/mkimage"
-  def Creds	= "mk-dockerhub-creds"
+  def ImageName = "suhvas/suhas-pridevops"
+  def Creds	= "dockerhubaccount"
   def imageTag = "1.0"
   try{
   stage('Checkout'){
-      git 'https://github.com/maheshkharwadkar/mk-k8-ci-cd.git'
+      git 'https://github.com/suhvas/jenkins-mvn-docker.git'
+      //git 'https://github.com/maheshkharwadkar/mk-k8-ci-cd.git'
       //sh "git rev-parse --short HEAD > .git/commit-id"
       //imageTag= readFile('.git/commit-id').trim()
 
@@ -18,13 +19,23 @@ node{
       sh "npm install"
       sh "npm test"
   }
-  stage('Docker Build, Push'){
-    withDockerRegistry([credentialsId: "${Creds}", url: 'https://index.docker.io/v1/']) {
-      sh "docker build -t ${ImageName}:${imageTag} ."
-      sh "docker push ${ImageName}"
-        }
-
+  //stage('Docker Build, Push'){
+  //  withDockerRegistry([credentialsId: "${Creds}", url: 'https://index.docker.io/v1/']) {
+  //    sh "docker build -t ${ImageName}:${imageTag} ."
+  //    sh "docker push ${ImageName}"
+  //      }
+   // }
+    stage ('Push Docker image to DockerHub') {
+   // withCredentials([usernamePassword(credentialsId: 'amazon', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+    withCredentials([string(credentialsId: "${Creds}", variable: "${Creds}")]) 
+    {
+     sh "docker login -u suhvas -p ${dockerhubaccount}"
     }
+    //sh 'docker push suhvas/suhas-pridevops:0.1.0'
+    sh "docker build ${ImageName}:${imageTag} ."
+    //sh 'docker rmi suhvas/suhas-pridevops:0.1.0'
+    //sh "docker rmi -t ${ImageName}:${imageTag} ."
+  }
     stage('Deploy on K8s'){
 	script{
         sh "cd ansible/sayarapp-deploy"
